@@ -15,6 +15,7 @@ const options = {
       clientId: process.env.GITHUB_ID,
       clientSecret: process.env.GITHUB_SECRET,
     }),
+
   ],
   adapter: PrismaAdapter(prisma),
   secret: process.env.SECRET,

@@ -1,57 +1,55 @@
 import React from "react"
 import { GetStaticProps } from "next"
 import Layout from "../components/Layout"
-import Post, { PostProps } from "../components/Post"
+import Todo, { TodoProps } from "../components/Todo"
 import prisma from "../lib/prisma"
+import SuperJSON from "superjson"
 
+// GetStaticProps is called when the page is built the first time
 export const getStaticProps: GetStaticProps = async () => {
-  const feed = await prisma.post.findMany({
-    where: { published: true },
-    include: {
-      author: {
-        select: { name: true },
-      },
-    },
-  });
-  return {
-    props: { feed },
-    revalidate: 10,
-  };
+    const feed = await prisma.todo.findMany({
+        // include the author related to the post, but only the name
+        include:{ 
+            author: {
+                select: { name: true }
+            },
+        },
+    });
+    
+    return {
+        props:  { 
+            feed: JSON.parse(JSON.stringify(feed))
+        },
+        // time after which the regeneration-process is triggered, which if successful renders the updated page
+        revalidate: 10,
+    };
 };
 
-type Props = {
-  feed: PostProps[]
+type Props =  {
+    feed: TodoProps[]
 }
 
-const Blog: React.FC<Props> = (props) => {
-  return (
-    <Layout>
-      <div className="page">
-        <h1>Public Feed</h1>
-        <main>
-          {props.feed.map((post) => (
-            <div key={post.id} className="post">
-              <Post post={post} />
+const List: React.FC<Props> = (props) => {
+    return (
+        <Layout>
+            <div className="page">
+                <h1>My TodoList</h1>
+                <main>
+                    {props.feed.map((todo) => (
+                        <div key={todo.id} className="todo"> 
+                            <Todo todo={todo} />
+                        </div>
+                    ))}
+                </main>
             </div>
-          ))}
-        </main>
-      </div>
-      <style jsx>{`
-        .post {
-          background: white;
-          transition: box-shadow 0.1s ease-in;
-        }
-
-        .post:hover {
-          box-shadow: 1px 1px 3px #aaa;
-        }
-
-        .post + .post {
-          margin-top: 2rem;
-        }
-      `}</style>
-    </Layout>
-  )
+            <style jsx>{`
+                .todo { background: white; transition: box-shadow 0.1s ease-in;}
+                .todo:hover { box-shadow: 1px 1px 3px #aaa; }
+                .todo + .todo { margin-top: 2rem; }
+                `}
+            </style>
+        </Layout>
+    )
 }
 
-export default Blog
+export default List;

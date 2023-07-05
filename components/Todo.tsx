@@ -6,8 +6,9 @@ export type TodoProps = {
     id: string;
     title: string;
     content: string;
-    duedate: string;
+    dueDate: string;
     creationdate: string;
+    publicationDate: number;
     finished: boolean;
     author: {
         name: string;
@@ -17,6 +18,7 @@ export type TodoProps = {
 
 const Todo: React.FC<{ todo: TodoProps }> = ({ todo }) => {
     const authorName = todo.author ? todo.author.name : 'Unknown author';
+
     return (
         <div onClick={() => Router.push("/t/[id]", `/t/${todo.id}`)}> 
             <h2>{todo.title}</h2>

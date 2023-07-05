@@ -17,7 +17,7 @@ model Todo {
   id              String   @id @default(cuid())
   title           String
   content         String?
-  publicationDate DateTime @default(now())
+  publicationDate DateTime @default(now()) @db.Timestamp() // last one is specific for postgres DB
   dueDate         String?
   finished        Boolean  @default(false)
   author          User?    @relation(fields: [authorId], references: [id])
